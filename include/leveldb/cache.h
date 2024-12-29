@@ -33,13 +33,16 @@ LEVELDB_EXPORT Cache* NewLRUCache(size_t capacity);
 
 class LEVELDB_EXPORT Cache {
  public:
+  /* 构造函数 */
   Cache() = default;
 
+  /* 禁止拷贝构造函数和赋值运算符 */
   Cache(const Cache&) = delete;
   Cache& operator=(const Cache&) = delete;
 
   // Destroys all existing entries by calling the "deleter"
   // function that was passed to the constructor.
+  /* 析构函数 */
   virtual ~Cache();
 
   // Opaque handle to an entry stored in the cache.

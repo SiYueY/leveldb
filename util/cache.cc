@@ -20,6 +20,7 @@ Cache::~Cache() {}
 namespace {
 
 // LRU cache implementation
+// LRU缓存实现
 //
 // Cache entries have an "in_cache" boolean indicating whether the cache has a
 // reference on the entry.  The only ways that this can become false without the
@@ -67,15 +68,20 @@ struct LRUHandle {
 // table implementations in some of the compiler/runtime combinations
 // we have tested.  E.g., readrandom speeds up by ~5% over the g++
 // 4.4.3's builtin hashtable.
+/* Hash table 哈希表 */
 class HandleTable {
  public:
+  /* 构造函数 */
   HandleTable() : length_(0), elems_(0), list_(nullptr) { Resize(); }
+
+  /* 析构函数 */
   ~HandleTable() { delete[] list_; }
 
   LRUHandle* Lookup(const Slice& key, uint32_t hash) {
     return *FindPointer(key, hash);
   }
 
+  /* 插入 */
   LRUHandle* Insert(LRUHandle* h) {
     LRUHandle** ptr = FindPointer(h->key(), h->hash);
     LRUHandle* old = *ptr;
@@ -92,6 +98,7 @@ class HandleTable {
     return old;
   }
 
+  /* 删除 */
   LRUHandle* Remove(const Slice& key, uint32_t hash) {
     LRUHandle** ptr = FindPointer(key, hash);
     LRUHandle* result = *ptr;
@@ -105,9 +112,9 @@ class HandleTable {
  private:
   // The table consists of an array of buckets where each bucket is
   // a linked list of cache entries that hash into the bucket.
-  uint32_t length_;
-  uint32_t elems_;
-  LRUHandle** list_;
+  uint32_t length_; // 哈希表大小，即桶的数量
+  uint32_t elems_;  // 哈希表当前存储的元素数量
+  LRUHandle** list_;  // 指针数组，每个指针都是指向LRUHandle的指针，用于存储哈希表中每个桶的头指针
 
   // Return a pointer to slot that points to a cache entry that
   // matches key/hash.  If there is no such cache entry, return a

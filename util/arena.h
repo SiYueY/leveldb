@@ -15,21 +15,27 @@ namespace leveldb {
 
 class Arena {
  public:
+  /* 构造函数 */
   Arena();
 
+  /* 拷贝构造函数 */
   Arena(const Arena&) = delete;
+  /* 重载赋值运算符 */
   Arena& operator=(const Arena&) = delete;
 
+  /* 析构函数 */
   ~Arena();
 
   // Return a pointer to a newly allocated memory block of "bytes" bytes.
+  /* 返回指向新分配的bytes字节大小内存块的指针 */
   char* Allocate(size_t bytes);
 
   // Allocate memory with the normal alignment guarantees provided by malloc.
+  /* 使用malloc保证的常规对齐进行内存分配 */
   char* AllocateAligned(size_t bytes);
 
-  // Returns an estimate of the total memory usage of data allocated
-  // by the arena.
+  // Returns an estimate of the total memory usage of data allocated by the arena.
+  /* 估计arena分配内存容量的使用情况 */
   size_t MemoryUsage() const {
     return memory_usage_.load(std::memory_order_relaxed);
   }

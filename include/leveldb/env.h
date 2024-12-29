@@ -62,6 +62,8 @@ class LEVELDB_EXPORT Env {
   // implementation instead of relying on this default environment.
   //
   // The result of Default() belongs to leveldb and must never be deleted.
+  /* 返回适合当前操作系统的默认环境。
+   * Default()的返回结果属于leveldb，且永远不能删除。*/
   static Env* Default();
 
   // Create an object that sequentially reads the file with the specified name.
@@ -71,6 +73,11 @@ class LEVELDB_EXPORT Env {
   // NotFound status when the file does not exist.
   //
   // The returned file will only be accessed by one thread at a time.
+  /* 创建一个对象，顺序读取指定名称的文件。
+   * 如果成功，将指向新文件的指针存储在*result中并返回OK
+   * 如果失败，将nullptr存储在*result中并返回非OK。
+   * 当文件不存在时，具体实现应该返回NotFound状态。
+   * 返回的文件一次只能被一个线程访问。*/
   virtual Status NewSequentialFile(const std::string& fname,
                                    SequentialFile** result) = 0;
 
@@ -82,6 +89,11 @@ class LEVELDB_EXPORT Env {
   // not exist.
   //
   // The returned file may be concurrently accessed by multiple threads.
+  /* 创建一个对象，支持随机读取指定名称的文件。
+   * 如果成功，将指向新文件的指针存储在*result中并返回OK。
+   * 如果失败，将nullptr存储在*result中并返回非OK。
+   * 当文件不存在时，具体实现应该返回NotFound状态。
+   * 返回的文件可以被多个线程并发访问。*/
   virtual Status NewRandomAccessFile(const std::string& fname,
                                      RandomAccessFile** result) = 0;
 
@@ -332,13 +344,17 @@ LEVELDB_EXPORT Status ReadFileToString(Env* env, const std::string& fname,
 // An implementation of Env that forwards all calls to another Env.
 // May be useful to clients who wish to override just part of the
 // functionality of another Env.
+/* 代理模式，由EnvWrapper控制对Env的访问 */
 class LEVELDB_EXPORT EnvWrapper : public Env {
  public:
   // Initialize an EnvWrapper that delegates all calls to *t.
+  /* 构造函数，初始化EnvWrapper以将所有调用委托给*t */
   explicit EnvWrapper(Env* t) : target_(t) {}
+  /* 虚拟析构函数*/
   virtual ~EnvWrapper();
 
   // Return the target to which this Env forwards all calls.
+  /* 返回该Env转发所有调用的目标 */
   Env* target() const { return target_; }
 
   // The following text is boilerplate that forwards all methods to target().

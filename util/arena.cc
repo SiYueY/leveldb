@@ -6,13 +6,16 @@
 
 namespace leveldb {
 
+/* 块大小*/
 static const int kBlockSize = 4096;
 
+/* 构造函数 */
 Arena::Arena()
     : alloc_ptr_(nullptr), alloc_bytes_remaining_(0), memory_usage_(0) {}
 
+/* 析构函数 */
 Arena::~Arena() {
-  for (size_t i = 0; i < blocks_.size(); i++) {
+  for (size_t i = 0; i < blocks_.size(); ++i) {
     delete[] blocks_[i];
   }
 }
@@ -21,11 +24,13 @@ char* Arena::AllocateFallback(size_t bytes) {
   if (bytes > kBlockSize / 4) {
     // Object is more than a quarter of our block size.  Allocate it separately
     // to avoid wasting too much space in leftover bytes.
+    /* bytes超过1/4块大小时，则单独分配新的内存块，以避免在剩余块字节中浪费过多空间 */
     char* result = AllocateNewBlock(bytes);
     return result;
   }
 
   // We waste the remaining space in the current block.
+  /* 浪费当前块中的剩余空间 */
   alloc_ptr_ = AllocateNewBlock(kBlockSize);
   alloc_bytes_remaining_ = kBlockSize;
 

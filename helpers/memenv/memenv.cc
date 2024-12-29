@@ -220,8 +220,10 @@ class NoOpLogger : public Logger {
 
 class InMemoryEnv : public EnvWrapper {
  public:
+  /* 构造函数 */
   explicit InMemoryEnv(Env* base_env) : EnvWrapper(base_env) {}
 
+  /* 析构函数 */
   ~InMemoryEnv() override {
     for (const auto& kvp : file_map_) {
       kvp.second->Unref();
@@ -229,6 +231,7 @@ class InMemoryEnv : public EnvWrapper {
   }
 
   // Partial implementation of the Env interface.
+  /* Env接口的部分实现 */
   Status NewSequentialFile(const std::string& fname,
                            SequentialFile** result) override {
     MutexLock lock(&mutex_);
